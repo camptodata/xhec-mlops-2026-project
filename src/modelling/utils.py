@@ -17,17 +17,3 @@ def pickle_object(obj: Any, path: Path) -> None:  # noqa: ANN401
     """
     with Path(path).open("wb") as file:
         pickle.dump(obj, file)
-
-
-@task(name="Load pickle")
-def load_pickle(path: Path) -> Any:  # noqa: ANN401
-    """Load an object from a pickle file.
-
-    Args:
-        path: Pickle file to read.
-
-    Returns:
-        The unpickled object.
-    """
-    with Path(path).open("rb") as file:
-        return pickle.load(file)
