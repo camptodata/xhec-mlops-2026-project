@@ -21,4 +21,39 @@ jobs:
         run: uv run pre-commit run --all-files --show-diff-on-failure
 
       - name: Run tests
-        run: uv run pytest
+        run: make test
+
+  docker:
+    name: Docker image
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Build the image
+        run: make docker-build
+
+      - name: Run the container
+        run: docker run -d --name abalone -p 8000:8001 -p 4200:4201 abalone-api
+
+      - name: Wait for the API
+        run: |
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:8000/ && exit 0
+            sleep 2
+          done
+          docker logs abalone
+          exit 1
+
+      - name: Predict with the API
+        run: |
+          curl -sf -X POST http://localhost:8000/predict             -H 'Content-Type: application/json'             -d '{"sex": "M", "length": 0.455, "diameter": 0.365, "height": 0.095, "whole_weight": 0.514, "shucked_weight": 0.2245, "viscera_weight": 0.101, "shell_weight": 0.15}'             || (docker logs abalone; exit 1)
+
+      - name: Wait for the Prefect UI
+        run: |
+          for i in $(seq 1 45); do
+            curl -sf http://localhost:4200/api/health && exit 0
+            sleep 2
+          done
+          docker logs abalone
+          exit 1
