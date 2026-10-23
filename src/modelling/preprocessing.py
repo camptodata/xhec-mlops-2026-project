@@ -3,11 +3,13 @@
 from pathlib import Path
 
 import pandas as pd
+from prefect import task
 from sklearn.preprocessing import OneHotEncoder
 
 from src.modelling.config import CATEGORICAL_COLS, NUMERICAL_COLS, TARGET
 
 
+@task(name="Load data")
 def load_data(path: Path) -> pd.DataFrame:
     """Read the abalone CSV and rename its columns to snake_case.
 
@@ -21,6 +23,7 @@ def load_data(path: Path) -> pd.DataFrame:
     return df.rename(columns=lambda col: col.lower().replace(" ", "_"))
 
 
+@task(name="Preprocess")
 def preprocess(
     df: pd.DataFrame, encoder: OneHotEncoder | None = None, with_target: bool = True
 ) -> tuple[pd.DataFrame, pd.Series | None, OneHotEncoder]:

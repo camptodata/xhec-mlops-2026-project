@@ -4,7 +4,10 @@ import pickle
 from pathlib import Path
 from typing import Any
 
+from prefect import task
 
+
+@task(name="Save pickle")
 def pickle_object(obj: Any, path: Path) -> None:  # noqa: ANN401
     """Save an object to a pickle file.
 
@@ -16,6 +19,7 @@ def pickle_object(obj: Any, path: Path) -> None:  # noqa: ANN401
         pickle.dump(obj, file)
 
 
+@task(name="Load pickle")
 def load_pickle(path: Path) -> Any:  # noqa: ANN401
     """Load an object from a pickle file.
 
@@ -26,4 +30,4 @@ def load_pickle(path: Path) -> Any:  # noqa: ANN401
         The unpickled object.
     """
     with Path(path).open("rb") as file:
-        return pickle.load(file)  # noqa: S301
+        return pickle.load(file)

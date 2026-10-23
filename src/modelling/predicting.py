@@ -2,10 +2,12 @@
 
 import numpy as np
 import pandas as pd
+from prefect import task
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
 
+@task(name="Predict")
 def predict(x: pd.DataFrame, model: LinearRegression) -> np.ndarray:
     """Predict the number of rings.
 
@@ -19,6 +21,7 @@ def predict(x: pd.DataFrame, model: LinearRegression) -> np.ndarray:
     return model.predict(x)
 
 
+@task(name="Evaluate model")
 def evaluate_model(y_true: pd.Series, y_pred: np.ndarray) -> dict[str, float]:
     """Compute regression metrics.
 
