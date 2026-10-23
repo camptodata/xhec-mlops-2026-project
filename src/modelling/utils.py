@@ -1,4 +1,4 @@
-"""Helpers to save and load Python objects with pickle."""
+"""Helper to save Python objects with pickle."""
 
 import pickle
 from pathlib import Path
