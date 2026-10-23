@@ -6,16 +6,16 @@ jobs:
   CI:
     name: Launching CI
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ['3.10'] # TODO: update this version
 
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+      - uses: actions/checkout@v4
+      - name: Set up uv with Python 3.11
+        uses: astral-sh/setup-uv@v6
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: "3.11"
 
-      - name: # TODO create a step to install your project's dependencies
-      - name: # TODO create a step to test the quality of your code
+      - name: Install dependencies
+        run: uv sync --locked
+
+      - name: Check code quality
+        run: uv run pre-commit run --all-files --show-diff-on-failure
