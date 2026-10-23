@@ -1,0 +1,24 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  CI:
+    name: Launching CI
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+      - name: Set up uv with Python 3.11
+        uses: astral-sh/setup-uv@v7
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: uv sync --locked
+
+      - name: Check code quality
+        run: uv run pre-commit run --all-files --show-diff-on-failure
+
+      - name: Run tests
+        run: uv run pytest
