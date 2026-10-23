@@ -84,7 +84,7 @@ secrets/*
 .DS_Store
 
 # Data and MLflow
-data/*.csv
+data/
 mlruns/
 mlartifacts/
 mlflow.db
