@@ -65,6 +65,35 @@ uv run python -m src.modelling.main data/abalone.csv
 This prints the test metrics (RMSE, MAE, R2) and saves `encoder.pkl` and `model.pkl` in `src/web_service/local_objects/`.
 Run the tests with `uv run pytest`.
 
+The training is a Prefect flow (`train_model_workflow`), so this run is also tracked by Prefect.
+
+### Orchestration with Prefect
+
+1. Start the Prefect server (keep it running in its own terminal):
+   ```bash
+   uv run prefect server start
+   ```
+2. In every other terminal, point Prefect to it:
+   ```bash
+   export PREFECT_API_URL=http://127.0.0.1:4200/api   # mac/linux; on Windows PowerShell: $env:PREFECT_API_URL = "http://127.0.0.1:4200/api"
+   # or, to save it in your Prefect profile:
+   uv run prefect config set PREFECT_API_URL=http://127.0.0.1:4200/api
+   ```
+3. Run the training flow once: `uv run python -m src.modelling.main data/abalone.csv`
+4. Start the weekly retraining deployment (every Sunday at 00:00, see `src/modelling/deployment.py`):
+   ```bash
+   uv run python -m src.modelling.deployment
+   ```
+5. Trigger a run manually, without waiting for the schedule:
+   ```bash
+   uv run prefect deployment run "Train model/train-model-weekly"
+   ```
+6. Open the UI at http://127.0.0.1:4200 to see the flow runs and their tasks.
+
+### Make targets
+
+`make install`, `make data`, `make train`, `make prefect-server`, `make deploy`, `make test` and `make lint` wrap the commands above.
+
 ## 👥 Team
 
 - Nick Hartmann, GitHub [@camptodata](https://github.com/camptodata)
@@ -151,7 +180,7 @@ Use uv to manage dependencies. Add a package (use `--dev` for development tools)
 uv add <package>
 ```
 
-This updates `pyproject.toml` and `uv.lock`.
+This updates `pyproject.toml` and `uv.lock`, which replace the `requirements*.in` files mentioned in the PR instructions.
 
 ### Code Quality
 - The pre-commit hooks will automatically format your code
