@@ -51,6 +51,20 @@ Traditionally, determining an abalone's age requires:
    uv run pre-commit install
    ```
 
+### Train the model
+
+Download the dataset into `data/` (no Kaggle login needed) and run the training from the repo root:
+
+```bash
+mkdir -p data
+curl -L -o data/abalone.zip https://www.kaggle.com/api/v1/datasets/download/rodolfomendes/abalone-dataset
+unzip -o data/abalone.zip -d data
+uv run python -m src.modelling.main data/abalone.csv
+```
+
+This prints the test metrics (RMSE, MAE, R2) and saves `encoder.pkl` and `model.pkl` in `src/web_service/local_objects/`.
+Run the tests with `uv run pytest`.
+
 ## 👥 Team
 
 - Nick Hartmann, GitHub [@camptodata](https://github.com/camptodata)
